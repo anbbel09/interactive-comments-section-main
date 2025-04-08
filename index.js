@@ -11,7 +11,7 @@ fetch('data.json')
 
     for (let comentario of comments.comments) {
       commentContainer.innerHTML += `
-        <article class="bg-white rounded-lg p-2 my-3">
+        <article class="bg-white rounded-lg p-2">
           <div id="user" class="flex gap-5 items-center">
             <img class="w-1/6" src="${comentario.user.image.webp}" alt="">
             <h2 class="font-medium">${comentario.user.username}</h2>
@@ -28,20 +28,23 @@ fetch('data.json')
               <img class="w-4 h-4" src="images/icon-reply.svg" alt="">Reply
             </button>
           </div>
-        </article>`;
+        </article>
+        `;
     }
 
     const current = currentUser.currentUser;
 
    
     commentContainer.innerHTML += `
-      <form id="formComment" class="bg-white rounded-lg p-2 w-full" action="">
+      <form id="formComment" class="bg-white rounded-lg p-2 w-full h-full" action="">
         <textarea class="border-1 border-gray-400 w-full h-28 rounded-lg p-2" placeholder="Add a comment..."></textarea>
         <div class="flex justify-between mt-3">
           <img class="w-1/6" src="${current.image.webp}" alt="">
           <button class="bg-indigo-800 w-1/3 rounded-lg font-semibold text-white text-lg h-auto" type="submit">SEND</button>
         </div>
-      </form>`;
+      </form>
+     
+      `;
 
 
     const form = document.querySelector('form');
@@ -54,8 +57,10 @@ fetch('data.json')
       const mensaje = textarea.value.trim();
       if (mensaje === "") return;
 
+      const comentarioId = Date.now();
+
       const nuevoComentario = `
-        <article class="bg-white rounded-lg p-2 my-3">
+        <article data-id="${comentarioId}" class="bg-white rounded-lg p-2 my-3 comment">
           <div class="flex gap-5 items-center">
             <img class="w-1/6" src="${current.image.webp}" alt="">
             <h2 class="font-medium">${current.username}</h2>
@@ -69,15 +74,55 @@ fetch('data.json')
               <span class="font-bold text-indigo-800">0</span>
               <img class="w-4 h-1 cursor-pointer" src="images/icon-minus.svg" alt="">
             </button>
-            <div class="flex w-1/2 justify-evenly gap-3">
-            <button class="flex items-center gap-2 font-semibold text-red-700"> <img class="w-4 h-4" src="images/icon-delete.svg" alt=""> Delete</button>
-            <button class="flex items-center gap-2 font-semibold text-indigo-600"> <img class="w-4 h-4" src="images/icon-edit.svg" alt="">Edit</button>
-            </div>
+            <div class="customContainer flex w-1/2 justify-evenly gap-3">
+    <button class="deleteBtn flex items-center gap-2 font-semibold text-red-700"> 
+      <img class="w-4 h-4" src="images/icon-delete.svg" alt=""> Delete
+    </button>
+    <button class="editBtn flex items-center gap-2 font-semibold text-indigo-600"> 
+      <img class="w-4 h-4" src="images/icon-edit.svg" alt="">Edit
+    </button>
+  </div>
           </div>
         </article>
       `;
 
       formComment.insertAdjacentHTML('beforebegin', nuevoComentario);
       textarea.value = "";
+
+      const nuevoComentarioEl = document.querySelector(`[data-id="${comentarioId}"]`);
+        const modal = document.getElementById('modalContainer');
+
+
+nuevoComentarioEl.querySelector('.customContainer').addEventListener('click', (e) => {
+  const target = e.target;
+
+  if (target.closest('.deleteBtn')) {
+    modal.style.display = 'block';
+
+    const handleModalClick = (e) => {
+      if (e.target.id === 'no') {
+        modal.style.display = 'none';
+      } else if (e.target.id === 'yes') {
+        nuevoComentarioEl.remove();
+        modal.style.display = 'none';
+      }
+
+
+      modal.removeEventListener('click', handleModalClick);
+    };
+
+    modal.addEventListener('click', handleModalClick);
+  }
+
+});
+
+      
     });
   });
+
+ 
+
+  
+
+
+  
