@@ -36,7 +36,7 @@ fetch('data.json')
 
    
     commentContainer.innerHTML += `
-      <form id="formComment" class="bg-white rounded-lg p-2 w-full h-full" action="">
+      <form id="formComment" class="bg-white rounded-lg p-2 w-full" action="">
         <textarea class="border-1 border-gray-400 w-full h-28 rounded-lg p-2" placeholder="Add a comment..."></textarea>
         <div class="flex justify-between mt-3">
           <img class="w-1/6" src="${current.image.webp}" alt="">
@@ -75,10 +75,10 @@ fetch('data.json')
               <img class="w-4 h-1 cursor-pointer" src="images/icon-minus.svg" alt="">
             </button>
             <div class="customContainer flex w-1/2 justify-between gap-3">
-    <button class="deleteBtn flex items-center gap-2 font-semibold text-red-700"> 
+    <button class="deleteBtn flex flex-row items-center gap-2 font-semibold text-red-700"> 
       <img class="w-4 h-4" src="images/icon-delete.svg" alt=""> Delete
     </button>
-    <button class="editBtn flex items-center gap-2 font-semibold text-indigo-600"> 
+    <button class="editBtn flex flex-row items-center gap-2 font-semibold text-indigo-600"> 
       <img class="w-4 h-4" src="images/icon-edit.svg" alt="">Edit
     </button>
   </div>
@@ -117,7 +117,9 @@ comentario.querySelector('.customContainer').addEventListener('click', (e) => {
     
   } else if (target.closest('.editBtn')){
 
-    editBtn = document.querySelector('.editBtn')
+const  editBtn = document.querySelector('.editBtn');
+const customContainer = comentario.querySelector('.customContainer');
+const actionButtons = customContainer.querySelectorAll('.editBtn, .deleteBtn');
     
   const commentText = comentario.querySelector('p.font-normal'); // el texto del comentario
   const originalText = commentText.textContent;
@@ -128,19 +130,19 @@ comentario.querySelector('.customContainer').addEventListener('click', (e) => {
   textareaEdit.value = originalText;
 
   // Botón de guardar
-  const saveBtn = document.createElement('button');
-  saveBtn.textContent = 'Save';
-  saveBtn.classList.add('bg-indigo-600', 'text-white', 'px-3', 'py-1', 'rounded');
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    saveBtn.classList.add('bg-indigo-600', 'text-white', 'px-3', 'py-1', 'rounded');
 
-  if(editBtn){
-    const customContainer = comentario.querySelector('.customContainer');
- const actionButtons = customContainer.querySelectorAll('.editBtn, .deleteBtn');
- actionButtons.forEach(btn => btn.style.display = 'none');
-   } 
 
   // Reemplazamos el texto por el textarea
   commentText.replaceWith(textareaEdit);
   target.closest('.customContainer').appendChild(saveBtn);
+
+  if(editBtn){
+ 
+    actionButtons.forEach(btn => btn.style.display = 'none');
+  }
 
   // Guardar cambios
   saveBtn.addEventListener('click', () => {
@@ -152,9 +154,7 @@ comentario.querySelector('.customContainer').addEventListener('click', (e) => {
     textareaEdit.replaceWith(nuevoParrafo);
     saveBtn.remove();
 
-    const customContainer = comentario.querySelector('.customContainer');
-    const actionButtons = customContainer.querySelectorAll('.editBtn, .deleteBtn');
-    actionButtons.forEach(btn => btn.style.display = 'block');
+    actionButtons.forEach(btn => btn.style.display = 'flex');
   });
 
 
