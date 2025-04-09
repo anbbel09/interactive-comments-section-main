@@ -74,7 +74,7 @@ fetch('data.json')
               <span class="font-bold text-indigo-800">0</span>
               <img class="w-4 h-1 cursor-pointer" src="images/icon-minus.svg" alt="">
             </button>
-            <div class="customContainer flex w-1/2 justify-evenly gap-3">
+            <div class="customContainer flex w-1/2 justify-between gap-3">
     <button class="deleteBtn flex items-center gap-2 font-semibold text-red-700"> 
       <img class="w-4 h-4" src="images/icon-delete.svg" alt=""> Delete
     </button>
@@ -89,21 +89,23 @@ fetch('data.json')
       formComment.insertAdjacentHTML('beforebegin', nuevoComentario);
       textarea.value = "";
 
-      const nuevoComentarioEl = document.querySelector(`[data-id="${comentarioId}"]`);
-        const modal = document.getElementById('modalContainer');
+    const comentario = document.querySelector(`[data-id="${comentarioId}"]`);
+        
+    const modal = document.getElementById('modalContainer');
 
 
-nuevoComentarioEl.querySelector('.customContainer').addEventListener('click', (e) => {
+comentario.querySelector('.customContainer').addEventListener('click', (e) => {
   const target = e.target;
 
   if (target.closest('.deleteBtn')) {
     modal.style.display = 'block';
 
+    
     const handleModalClick = (e) => {
       if (e.target.id === 'no') {
         modal.style.display = 'none';
       } else if (e.target.id === 'yes') {
-        nuevoComentarioEl.remove();
+        comentario.remove();
         modal.style.display = 'none';
       }
 
@@ -112,7 +114,51 @@ nuevoComentarioEl.querySelector('.customContainer').addEventListener('click', (e
     };
 
     modal.addEventListener('click', handleModalClick);
-  }
+    
+  } else if (target.closest('.editBtn')){
+
+    editBtn = document.querySelector('.editBtn')
+    
+  const commentText = comentario.querySelector('p.font-normal'); // el texto del comentario
+  const originalText = commentText.textContent;
+
+  // Crear textarea con el texto actual
+  const textareaEdit = document.createElement('textarea');
+  textareaEdit.classList.add('border', 'w-full', 'rounded', 'p-2', 'my-2');
+  textareaEdit.value = originalText;
+
+  // Botón de guardar
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.classList.add('bg-indigo-600', 'text-white', 'px-3', 'py-1', 'rounded');
+
+  if(editBtn){
+    const customContainer = comentario.querySelector('.customContainer');
+ const actionButtons = customContainer.querySelectorAll('.editBtn, .deleteBtn');
+ actionButtons.forEach(btn => btn.style.display = 'none');
+   } 
+
+  // Reemplazamos el texto por el textarea
+  commentText.replaceWith(textareaEdit);
+  target.closest('.customContainer').appendChild(saveBtn);
+
+  // Guardar cambios
+  saveBtn.addEventListener('click', () => {
+    const nuevoTexto = textareaEdit.value.trim();
+    const nuevoParrafo = document.createElement('p');
+    nuevoParrafo.className = 'font-normal text-gray-500 ';
+    nuevoParrafo.textContent = nuevoTexto || originalText;
+
+    textareaEdit.replaceWith(nuevoParrafo);
+    saveBtn.remove();
+
+    const customContainer = comentario.querySelector('.customContainer');
+    const actionButtons = customContainer.querySelectorAll('.editBtn, .deleteBtn');
+    actionButtons.forEach(btn => btn.style.display = 'block');
+  });
+
+
+}
 
 });
 
