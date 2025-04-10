@@ -2,6 +2,8 @@
 let com;
 const user = document.getElementById('user');
 const commentContainer = document.getElementById('commentContainer');
+const comentarioId = Date.now();
+
 
 fetch('data.json')
   .then(res => res.json())
@@ -11,7 +13,7 @@ fetch('data.json')
 
     for (let comentario of comments.comments) {
       commentContainer.innerHTML += `
-        <article class="bg-white rounded-lg p-2">
+        <article data-id="${comentarioId}" class="bg-white rounded-lg p-2 flex flex-col">
           <div id="user" class="flex gap-5 items-center">
             <img class="max-w-3xs" src="${comentario.user.image.webp}" alt="">
             <h2 class="font-medium">${comentario.user.username}</h2>
@@ -25,8 +27,10 @@ fetch('data.json')
               <img class="w-4 h-1 cursor-pointer" src="images/icon-minus.svg" alt="">
             </button>
             <button class="flex items-center gap-2 font-bold text-indigo-800 cursor-pointer">
-              <img class="w-4 h-4" src="images/icon-reply.svg" alt="">Reply
+              <img class="w-4 h-4 btnReply" src="images/icon-reply.svg" alt="">Reply
             </button>
+          </div>
+          <div class="replyCont w-full mx-auto my-3 p-2 border-l border-gray-400 hidden"> 
           </div>
         </article>
         `;
@@ -36,7 +40,7 @@ fetch('data.json')
 
    
     commentContainer.innerHTML += `
-      <form id="formComment" class="bg-white rounded-lg p-2 w-full md:mt-auto" action="">
+      <form id="formComment" class="bg-white rounded-lg p-2 w-full md:mt-auto formComment" action="">
         <textarea class="border-1 border-gray-400 w-full h-28 rounded-lg p-2" placeholder="Add a comment..."></textarea>
         <div class="flex justify-between items-center mt-3">
           <img class="max-w-3xs" src="${current.image.webp}" alt="">
@@ -57,8 +61,6 @@ fetch('data.json')
       const mensaje = textarea.value.trim();
       if (mensaje === "") return;
 
-      const comentarioId = Date.now();
-
       const nuevoComentario = `
         <article data-id="${comentarioId}" class="bg-white rounded-lg p-2 my-3 comment">
           <div class="flex gap-5 items-center">
@@ -74,7 +76,7 @@ fetch('data.json')
               <span class="font-bold text-indigo-800">0</span>
               <img class="w-4 h-1 cursor-pointer" src="images/icon-minus.svg" alt="">
             </button>
-            <div class="customContainer flex w-1/2 justify-between  md:justify-items-end gap-3  ">
+            <div class="customContainer flex w-full justify-between  md:justify-items-end gap-3  ">
     <button class="deleteBtn flex flex-row items-center gap-2 font-semibold text-red-700 md:ml-auto md:mr-4 md:text-lg"> 
       <img class="w-4 h-4 md:w-6 md:h-6" src="images/icon-delete.svg" alt=""> Delete
     </button>
@@ -164,6 +166,138 @@ const actionButtons = customContainer.querySelectorAll('.editBtn, .deleteBtn');
 
       
     });
+
+    commentContainer.addEventListener('click', (e) => {
+        let element = e.target;
+      
+        const btnReply = element.closest('.btnReply');
+        const btnReplyContainer = element.closest('[data-id]');
+      
+        if (btnReply || btnReplyContainer) {
+          let replyCont = btnReplyContainer.querySelector('.replyCont');
+      
+          // Inserta el formulario
+          replyCont.innerHTML = `
+            <form id="formComment" class="bg-white rounded-lg" action="">
+              <textarea class="border-1 border-gray-400 w-full h-20 rounded-lg p-2" placeholder="Add a comment..."></textarea>
+              <div class="flex justify-between items-end mt-3">
+                <img class="w-1/6" src="${current.image.webp}" alt="">
+                <button class="bg-indigo-800 w-1/3 py-3 md:max-w-1/6 md:py-4 rounded-lg font-semibold text-white text-sm" type="submit">SEND</button>
+              </div>
+            </form>
+          `;
+      
+          // Asegura que se muestre
+          replyCont.style.display = 'block';
+      
+          // Le da foco al textarea automáticamente
+          const textarea = replyCont.querySelector('textarea');
+          textarea.focus();
+        }
+        
+        
+
+      });
+
+      
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+  
+        const mensaje = textarea.value.trim();
+        if (mensaje === "") return;
+  
+        const comentarioId = Date.now(); // O alguna lógica para generar ID único
+  
+        const nuevoComentario = `
+          <article data-id="${comentarioId}" class="bg-white rounded-lg p-2 my-3 comment">
+            <div class="flex gap-5 items-center">
+              <img class="max-w-3xs" src="${current.image.webp}" alt="">
+              <h2 class="font-medium">${current.username}</h2>
+              <p class="text-white bg-indigo-600 py-1 px-3 rounded-md font-semibold text-xs">you</p>
+              <h3 class="font-light text-gray-500">Just now</h3>
+            </div>
+            <p class="font-normal text-gray-500 my-3">${mensaje}</p>
+            <div class="flex justify-between">
+              <button class="flex items-center justify-evenly w-1/3 md:max-w-1/5 bg-indigo-50 p-1 rounded-md md:my-2">
+                <img class="w-4 cursor-pointer" src="images/icon-plus.svg" alt="">
+                <span class="font-bold text-indigo-800">0</span>
+                <img class="w-4 h-1 cursor-pointer" src="images/icon-minus.svg" alt="">
+              </button>
+              <div class="customContainer flex w-full justify-between gap-3">
+                <button class="deleteBtn flex flex-row items-center gap-2 font-semibold text-red-700"> 
+                  <img class="w-4 h-4" src="images/icon-delete.svg" alt=""> Delete
+                </button>
+                <button class="editBtn flex flex-row items-center gap-2 font-semibold text-indigo-600"> 
+                  <img class="w-4 h-4" src="images/icon-edit.svg" alt="">Edit
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+  
+        replyCont.insertAdjacentHTML('beforebegin', nuevoComentario);
+        textarea.value = "";
+  
+        const comentario = document.querySelector(`[data-id="${comentarioId}"]`);
+        const modal = document.getElementById('modalContainer');
+  
+        // ✅ Delete y Edit listeners dentro del nuevo comentario
+        comentario.querySelector('.customContainer').addEventListener('click', (e) => {
+          const target = e.target;
+  
+          if (target.closest('.deleteBtn')) {
+            modal.style.display = 'block';
+  
+            const handleModalClick = (e) => {
+              if (e.target.id === 'no') {
+                modal.style.display = 'none';
+              } else if (e.target.id === 'yes') {
+                comentario.remove();
+                modal.style.display = 'none';
+              }
+  
+              modal.removeEventListener('click', handleModalClick);
+            };
+  
+            modal.addEventListener('click', handleModalClick);
+          }
+  
+          else if (target.closest('.editBtn')) {
+            const customContainer = comentario.querySelector('.customContainer');
+            const actionButtons = customContainer.querySelectorAll('.editBtn, .deleteBtn');
+  
+            const commentText = comentario.querySelector('p.font-normal');
+            const originalText = commentText.textContent;
+  
+            const textareaEdit = document.createElement('textarea');
+            textareaEdit.classList.add('border', 'w-full', 'rounded', 'p-2', 'my-2');
+            textareaEdit.value = originalText;
+  
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'Save';
+            saveBtn.classList.add('bg-indigo-600', 'text-white', 'px-3', 'py-1', 'rounded');
+  
+            commentText.replaceWith(textareaEdit);
+            target.closest('.customContainer').appendChild(saveBtn);
+  
+            actionButtons.forEach(btn => btn.style.display = 'none');
+  
+            saveBtn.addEventListener('click', () => {
+              const nuevoTexto = textareaEdit.value.trim();
+              const nuevoParrafo = document.createElement('p');
+              nuevoParrafo.className = 'font-normal text-gray-500';
+              nuevoParrafo.textContent = nuevoTexto || originalText;
+  
+              textareaEdit.replaceWith(nuevoParrafo);
+              saveBtn.remove();
+  
+              actionButtons.forEach(btn => btn.style.display = 'flex');
+            });
+          }
+        });
+      });
+    
   });
 
  
