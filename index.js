@@ -187,7 +187,7 @@ const actionButtons = customContainer.querySelectorAll('.editBtn, .deleteBtn');
             <form id="formComment" class="bg-white rounded-lg formComment">
               <textarea class="border-1 border-gray-400 w-full h-20 rounded-lg p-2" placeholder="Add a comment..."></textarea>
               <div class="flex justify-between items-end mt-3">
-                <img class="w-1/6" src="${current.image.webp}" alt="">
+                <img class="" src="${current.image.webp}" alt="">
                 <button class="bg-indigo-800 w-1/3 py-3 md:max-w-1/6 md:py-4 rounded-lg font-semibold text-white text-sm" type="submit">SEND</button>
               </div>
             </form>
