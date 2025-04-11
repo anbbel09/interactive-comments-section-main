@@ -619,6 +619,11 @@
       max-width: calc(2/5 * 100%);
     }
   }
+  .xl\:w-2\/5 {
+    @media (width >= 80rem) {
+      width: calc(2/5 * 100%);
+    }
+  }
 }
 @property --tw-border-style {
   syntax: "*";
