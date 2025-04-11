@@ -609,6 +609,16 @@
       width: calc(4/5 * 100%);
     }
   }
+  .lg\:max-w-2\/3 {
+    @media (width >= 64rem) {
+      max-width: calc(2/3 * 100%);
+    }
+  }
+  .lg\:max-w-2\/5 {
+    @media (width >= 64rem) {
+      max-width: calc(2/5 * 100%);
+    }
+  }
 }
 @property --tw-border-style {
   syntax: "*";
